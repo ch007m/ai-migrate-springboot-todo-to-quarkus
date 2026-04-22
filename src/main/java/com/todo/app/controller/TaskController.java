@@ -1,91 +1,94 @@
 package com.todo.app.controller;
 
+import java.net.URI;
 import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.ResponseBody;
-
-import org.springframework.data.domain.Page;
 
 import com.todo.app.entity.Task;
 import com.todo.app.service.TaskService;
 
-@Controller
+import io.quarkus.qute.CheckedTemplate;
+import io.quarkus.qute.TemplateInstance;
+import jakarta.inject.Inject;
+import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.DELETE;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.POST;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.PathParam;
+import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
+
+@Path("/")
 public class TaskController {
 
-    @Autowired
-    private TaskService taskService;
+    @Inject
+    TaskService taskService;
 
-    @GetMapping("/error")
-    public String viewErrorPage() {
-        return "error";
+    @CheckedTemplate(requireTypeSafeExpressions = false)
+    public static class Templates {
+        public static native TemplateInstance home(Task task, List<Task> tasks,
+                boolean noTasks, int currentPage, int totalPages, long totalItems);
+        public static native TemplateInstance error();
     }
 
-    @GetMapping("/")
-    public String viewIndexPage() {
-        return "redirect:/home";
+    @GET
+    @Path("error")
+    @Produces(MediaType.TEXT_HTML)
+    public TemplateInstance viewErrorPage() {
+        return Templates.error();
     }
 
-    @GetMapping("/home")
-    public String viewHome(Model model) {
-        model.addAttribute("task", new Task());
-        return findPaginated(1, model);
+    @GET
+    @Produces(MediaType.TEXT_HTML)
+    public Response viewIndexPage() {
+        return Response.seeOther(URI.create("/home")).build();
     }
 
-    @GetMapping("/home/{pageNo}")
-    public String findPaginated(@PathVariable(value = "pageNo") int pageNo, Model model) {
+    @GET
+    @Path("home")
+    @Produces(MediaType.TEXT_HTML)
+    public TemplateInstance viewHome() {
+        return findPaginated(1);
+    }
 
-        model.addAttribute("task", new Task());
-
+    @GET
+    @Path("home/{pageNo}")
+    @Produces(MediaType.TEXT_HTML)
+    public TemplateInstance findPaginated(@PathParam("pageNo") int pageNo) {
         int pageSize = 6;
+        long totalItems = taskService.countTasks();
+        int totalPages = (int) Math.ceil((double) totalItems / pageSize);
 
-        Page<Task> page = taskService.getAllTasksPage(pageNo, pageSize);
-        List<Task> tasks = page.getContent();
-
-        if (tasks.isEmpty()) {
-            model.addAttribute("noTasks", true);
-            if (pageNo > 1) {
-                return "redirect:/home/" + (pageNo - 1);
-            }
-        } else {
-            model.addAttribute("currentPage", pageNo);
-            model.addAttribute("totalPages", page.getTotalPages());
-            model.addAttribute("totalItems", page.getTotalElements());
-            model.addAttribute("tasks", tasks);
-
-            if (pageNo > page.getTotalPages()) {
-                return "redirect:/home/" + page.getTotalPages();
-            }
-            if (pageNo < 1) {
-                return "redirect:/home";
-            }
+        if (totalItems == 0) {
+            return Templates.home(new Task(), List.of(), true, 1, 0, 0);
         }
 
-        return "home";
+        if (pageNo > totalPages) {
+            pageNo = totalPages;
+        }
+        if (pageNo < 1) {
+            pageNo = 1;
+        }
+
+        List<Task> tasks = taskService.getTasksPage(pageNo, pageSize);
+        return Templates.home(new Task(), tasks, false, pageNo, totalPages, totalItems);
     }
 
-    // Create task using AJAX request
-    @PostMapping("/home")
-    @ResponseBody
-    public ResponseEntity<List<Task>> createTask(@RequestBody Task task) {
+    @POST
+    @Path("home")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response createTask(Task task) {
         taskService.addTask(task);
         List<Task> tasks = taskService.getAllTasks();
-        return ResponseEntity.ok(tasks);
+        return Response.ok(tasks).build();
     }
 
-    // Delete task using AJAX request
-    @DeleteMapping("/home/{taskId}")
-    public ResponseEntity<Void> deleteTask(@PathVariable Long taskId) {
+    @DELETE
+    @Path("home/{taskId}")
+    public Response deleteTask(@PathParam("taskId") Long taskId) {
         taskService.deleteTask(taskId);
-        return ResponseEntity.ok().build();
+        return Response.ok().build();
     }
-
 }

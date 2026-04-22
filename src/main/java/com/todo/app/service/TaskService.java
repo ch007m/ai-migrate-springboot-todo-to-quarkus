@@ -1,28 +1,57 @@
 package com.todo.app.service;
 
 import com.todo.app.entity.Task;
-import org.springframework.data.domain.Page;
+import com.todo.app.repository.TaskRepository;
+import io.quarkus.hibernate.orm.panache.PanacheQuery;
+import io.quarkus.panache.common.Page;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
 
 import java.util.List;
 
-public interface TaskService {
+@ApplicationScoped
+public class TaskService {
 
-  // Add task
-  public void addTask(Task task);
+  @Inject
+  TaskRepository taskRepository;
 
-  // Delete task
-  public void deleteTaskById(Long id);
+  @Transactional
+  public void addTask(Task task) {
+    taskRepository.persist(task);
+  }
 
-  // Update task by id
-  public void updateTaskById(Long id, Task task);
+  @Transactional
+  public void deleteTaskById(Long id) {
+    taskRepository.deleteById(id);
+  }
 
-  // Get all tasks
-  public List<Task> getAllTasks();
+  @Transactional
+  public void updateTaskById(Long id, Task task) {
+    Task existing = taskRepository.findById(id);
+    if (existing != null) {
+      existing.title = task.title;
+      existing.description = task.description;
+      existing.dueDate = task.dueDate;
+    }
+  }
 
-  // Delete task by id
-  public void deleteTask(Long taskId);
+  public List<Task> getAllTasks() {
+    return taskRepository.listAll();
+  }
 
-  // Get task by page
-  Page<Task> getAllTasksPage(int pageNo, int pageSize);
+  @Transactional
+  public void deleteTask(Long taskId) {
+    taskRepository.deleteById(taskId);
+  }
 
+  public List<Task> getTasksPage(int pageNo, int pageSize) {
+    PanacheQuery<Task> query = taskRepository.findAll();
+    query.page(Page.of(pageNo - 1, pageSize));
+    return query.list();
+  }
+
+  public long countTasks() {
+    return taskRepository.count();
+  }
 }

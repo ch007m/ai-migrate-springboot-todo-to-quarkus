@@ -4,7 +4,6 @@
 <head>
   <meta charset="UTF-8">
   <title>ToDo App</title>
-  <!-- Add Bootstrap CSS and JavaScript -->
   <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
@@ -43,14 +42,14 @@
       <form action="/home" method="post" id="taskForm">
         <div class="form-group">
           <input type="text" class="form-control" id="title" name="title"
-            placeholder="Task Title" value="{task.title}" required>
+            placeholder="Task Title" required>
         </div>
         <div class="form-group">
           <input class="form-control" id="description" name="description"
-            placeholder="Task Description" value="{task.description}" required></input>
+            placeholder="Task Description" required>
         </div>
         <div class="form-group">
-          <input type="date" class="form-control" id="dueDate" name="dueDate" value="{task.dueDate}">
+          <input type="date" class="form-control" id="dueDate" name="dueDate">
         </div>
         <button id="createTaskBtn" type="submit" class="btn btn-primary">Create Task</button>
       </form>
@@ -62,7 +61,6 @@
       <h2>Task List</h2>
       {#if !noTasks}
       <div class="row task-container">
-        <!-- Qute iteration to create cards for each task -->
         {#for task in tasks}
         <div class="col-md-4 mb-3">
           <div class="card">
@@ -71,7 +69,7 @@
               <hr>
               <p class="card-text">{task.description}</p>
               <p class="card-text">
-                Due Date: <span>{task.dueDate.format('dd MMMM yyyy')}</span>
+                Due Date: <span>{task.dueDate}</span>
               </p>
               <button class="btn btn-danger btn-delete" onclick="deleteTask(this)"
                 data-task-id="{task.id}">Delete</button>
@@ -145,17 +143,13 @@
     <script>
 
       function deleteTask (button) {
-        // Get the task ID from the data-task-id attribute
         const taskId = $(button).data('task-id');
 
-        // Send an AJAX DELETE request to delete the task
         $.ajax({
           type: 'DELETE',
           url: '/home/' + taskId,
           success: function () {
-            // Remove the card from the page on success
             $(button).closest('.card').remove();
-            // Trigger the modal programmatically
             $('#staticBackdrop').modal('show');
           },
           error: function (error) {
