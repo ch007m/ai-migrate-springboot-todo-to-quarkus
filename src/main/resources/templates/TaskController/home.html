@@ -71,7 +71,7 @@
               <hr>
               <p class="card-text">{task.description}</p>
               <p class="card-text">
-                Due Date: <span>{task.dueDate.format('dd MMMM yyyy')}</span>
+                Due Date: <span>{#if task.dueDate}{task.dueDate}{#else}N/A{/if}</span>
               </p>
               <button class="btn btn-danger btn-delete" onclick="deleteTask(this)"
                 data-task-id="{task.id}">Delete</button>
@@ -112,10 +112,10 @@
             </li>
 
             {#for i in totalPages}
-              {#if currentPage != i_count}
-              <a href="/home/{i_count}">{i_count}</a>
+              {#if currentPage != i}
+              <a href="/home/{i}">{i}</a>
               {#else}
-              <span>{i_count}</span>
+              <span>{i}</span>
               {/if}
               &nbsp; &nbsp;
             {/for}
