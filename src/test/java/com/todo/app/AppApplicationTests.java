@@ -1,13 +1,15 @@
 package com.todo.app;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
 
-@SpringBootTest
+import io.quarkus.test.junit.QuarkusTest;
+
+@QuarkusTest
 class AppApplicationTests {
 
-	@Test
-	void contextLoads() {
-	}
-
+    @Test
+    void contextLoads() {
+    }
 }
+
+// Made with Bob
