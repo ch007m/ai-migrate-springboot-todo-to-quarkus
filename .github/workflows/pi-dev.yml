@@ -25,7 +25,7 @@ jobs:
         uses: shaftoe/pi-coding-agent-action@v2
         with:
           provider: 'google'
-          model: 'gemini-3.1-pro-preview'
+          model: 'gemini-2.5-pro'
           github_token: ${{ secrets.WORKFLOW_GITHUB_TOKEN }}
           token: ${{ secrets.COPILOT_AGENT_TOKEN }}
           thinking_level: medium
