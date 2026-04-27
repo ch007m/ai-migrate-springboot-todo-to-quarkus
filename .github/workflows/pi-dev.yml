@@ -21,13 +21,23 @@ jobs:
         with:
           node-version: 24
 
-      - name: Pi Review
-        uses: shaftoe/pi-coding-agent-action@v2
-        with:
-          provider: 'gcloud'
-          model: 'claude-opus-4-6'
-          github_token: ${{ secrets.WORKFLOW_GITHUB_TOKEN }}
-          token: ${{ secrets.COPILOT_AGENT_TOKEN }}
-          thinking_level: medium
-          extensions:
-            git:https://github.com/maxandersen/pi-vertex-anthropic
+      #- name: Pi Review
+      #  uses: shaftoe/pi-coding-agent-action@v2
+      #  with:
+      #    provider: 'gcloud'
+      #    model: 'claude-opus-4-6'
+      #    github_token: ${{ secrets.WORKFLOW_GITHUB_TOKEN }}
+      #    token: ${{ secrets.COPILOT_AGENT_TOKEN }}
+      #    thinking_level: medium
+      #    extensions:
+      #      git:https://github.com/maxandersen/pi-vertex-anthropic
+
+      - name: Pi.dev
+        run: |
+          npm install -g @mariozechner/pi-coding-agent
+          pi install https://github.com/maxandersen/pi-vertex-anthropic
+          gcloud auth application-default login
+          export GOOGLE_CLOUD_PROJECT=itpc-gcp-cp-pe-eng-claude
+          export GOOGLE_CLOUD_LOCATION=europe-west1
+          
+          pi -p "Summarize this codebase"
