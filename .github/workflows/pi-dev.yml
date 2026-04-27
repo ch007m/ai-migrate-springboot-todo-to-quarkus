@@ -62,3 +62,5 @@ jobs:
             --provider vertex-anthropic \
             --model claude-opus-4-6 \
             -p
+          
+          echo "pi command executed"
