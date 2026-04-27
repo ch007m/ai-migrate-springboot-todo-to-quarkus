@@ -57,11 +57,11 @@ jobs:
           npm install -g @mariozechner/pi-coding-agent
           pi install https://github.com/maxandersen/pi-vertex-anthropic
           
-          echo "Google Vrertex Credentials"
-          echo $GOOGLE_APPLICATION_CREDENTIALS
+          echo "Google Vertex Credentials"
+          cat $GOOGLE_APPLICATION_CREDENTIALS
           
           # Now Pi should see the file perfectly
           pi "${{ github.event.comment.body }}" \
             --provider vertex-anthropic \
-            --model claude-4-6-opus \
+            --model claude-opus-4-6 \
             -p
