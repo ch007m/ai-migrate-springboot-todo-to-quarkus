@@ -38,17 +38,16 @@ jobs:
           credentials_json: '${{ secrets.GOOGLE_CLOUD_CREDENTIALS }}'
 
       - name: Run Pi.dev Agent
-          env:
-            GOOGLE_CLOUD_PROJECT: itpc-gcp-cp-pe-eng-claude
-            GOOGLE_CLOUD_LOCATION: europe-west1
-          run: |
-            # 1. Install CLI and Vertex Extension
-            npm install -g @mariozechner/pi-coding-agent
-            pi install https://github.com/maxandersen/pi-vertex-anthropic
-            
-            # 2. Execute Pi
-            # We use -p (print mode) and --non-interactive for CI environments
-            pi "${{ github.event.comment.body }}" \
-              --provider vertex-anthropic \
-              --model claude-4-6-opus \
-              --non-interactive
+        env:
+          GOOGLE_CLOUD_PROJECT: itpc-gcp-cp-pe-eng-claude
+          GOOGLE_CLOUD_LOCATION: europe-west1
+        run: |
+          # Install CLI and Vertex Extension
+          npm install -g @mariozechner/pi-coding-agent
+          pi install https://github.com/maxandersen/pi-vertex-anthropic
+          
+          # We use -p (print mode) and --non-interactive for CI environments
+          pi "${{ github.event.comment.body }}" \
+            --provider vertex-anthropic \
+            --model claude-4-6-opus \
+            --non-interactive
