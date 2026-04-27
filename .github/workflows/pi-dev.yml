@@ -60,7 +60,6 @@ jobs:
           echo "Running pi command"
           pi "${{ github.event.comment.body }}" \
             --provider vertex-anthropic \
-            --model claude-opus-4-6 \
-            -p
+            --model claude-opus-4-6
           
           echo "pi command executed"
