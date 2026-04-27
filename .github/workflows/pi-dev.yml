@@ -49,5 +49,5 @@ jobs:
           # We use -p (print mode) and --non-interactive for CI environments
           pi "${{ github.event.comment.body }}" \
             --provider vertex-anthropic \
-            --model claude-4-6-opus \
-            --non-interactive
+            --model claude-opus-4-6 \
+            -p
