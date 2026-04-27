@@ -16,10 +16,10 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v6
 
-      - name: Setup Node
-        uses: actions/setup-node@v6
-        with:
-          node-version: 24
+      #- name: Setup Node
+      #  uses: actions/setup-node@v6
+      #  with:
+      #    node-version: 24
 
       #- name: Pi Review
       #  uses: shaftoe/pi-coding-agent-action@v2
@@ -31,6 +31,10 @@ jobs:
       #    thinking_level: medium
       #    extensions:
       #      git:https://github.com/maxandersen/pi-vertex-anthropic
+
+      - uses: 'google-github-actions/auth@v3'
+        with:
+          credentials_json: '${{ secrets.GOOGLE_CLOUD_CREDENTIALS }}'
 
       - name: Pi.dev
         run: |
