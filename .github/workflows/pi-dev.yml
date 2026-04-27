@@ -31,5 +31,5 @@ jobs:
           model: 'gpt-4o'
           #prompt: 'Review the changes in this PR and suggest improvements for performance and security.'
           prompt: ${{ inputs.prompt }}
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          github_token: ${{ secrets.WORKFLOW_GITHUB_TOKEN }}
           token: ${{ secrets.COPILOT_AGENT_TOKEN }}
