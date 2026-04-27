@@ -1,8 +1,7 @@
 name: Pi Coding Agent
 on:
-  push:
-    branches:
-    - main
+  issue_comment:
+    types: [created]
 
 permissions:
   contents: write
@@ -11,6 +10,7 @@ permissions:
 
 jobs:
   pi-agent:
+    if: contains(github.event.comment.body, '/pi')
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -23,11 +23,9 @@ jobs:
 
       - name: Pi Review
         uses: shaftoe/pi-coding-agent-action@v2
-        if: contains(github.event.head_commit.message, '/pi')
         with:
           provider: 'google'
           model: 'gemini-3.1-pro-preview'
-          prompt: ${{ github.event.head_commit.message }}
           github_token: ${{ secrets.WORKFLOW_GITHUB_TOKEN }}
           token: ${{ secrets.COPILOT_AGENT_TOKEN }}
           extensions: |
