@@ -29,3 +29,5 @@ jobs:
           github_token: ${{ secrets.WORKFLOW_GITHUB_TOKEN }}
           token: ${{ secrets.COPILOT_AGENT_TOKEN }}
           thinking_level: medium
+          extensions:
+            git:https://github.com/maxandersen/pi-vertex-anthropic
