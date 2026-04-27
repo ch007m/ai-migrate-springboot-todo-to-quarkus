@@ -50,12 +50,12 @@ jobs:
       - name: Run Pi.dev Agent
         env:
           GOOGLE_CLOUD_PROJECT: itpc-gcp-cp-pe-eng-claude
-          GOOGLE_CLOUD_LOCATION: europe-west1
+          VERTEX_LOCATION: europe-west1
           # The variable is already in GITHUB_ENV, but we can be explicit:
           GOOGLE_APPLICATION_CREDENTIALS: ${{ env.GOOGLE_APPLICATION_CREDENTIALS }}
         run: |
           npm install -g @mariozechner/pi-coding-agent
-          pi install https://github.com/maxandersen/pi-vertex-anthropic
+          pi install npm:pi-provider-vertex-anthropic
           
           # Now Pi should see the file perfectly
           pi "${{ github.event.comment.body }}" \
