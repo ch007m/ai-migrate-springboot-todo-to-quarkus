@@ -1,0 +1,20 @@
+# Migration Decision Matrix
+# This file provides automated answers to common interactive prompts
+
+intent_responses:
+  - match_query: "Would you like to use the git workflow?"
+    answer: "Yes"
+    reasoning: "Authorized by project lead for full automation."
+
+  - match_query: "Which migration strategy ?"
+    answer: "Spring compat"
+    options: ["Spring compat","Native Quarkus"]
+    reasoning: "Selected 'Spring compat' to minimize breaking changes in the initial phase."
+
+  - match_query: "Could you confirm the project is in the current workspace, or let me try to access it directly?"
+    answer: "Yes"
+    reasoning: "User is running the SKILLs within the application to be migrated"
+
+default_behavior:
+  ask_user_if_missing: false  # If a question isn't here, make the 'safest' choice
+  log_decisions: true
