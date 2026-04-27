@@ -58,8 +58,7 @@ jobs:
           pi install npm:pi-provider-vertex-anthropic
           
           echo "Running pi command with prompt: ${{ github.event.comment.body }}"
-          script -q /dev/null \
-            pi --print \
+          pi --print \
             --no-prompt-templates \
             --provider vertex-anthropic \
             --model claude-opus-4-6 \
