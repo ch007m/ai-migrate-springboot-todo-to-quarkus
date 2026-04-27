@@ -1,0 +1,35 @@
+name: Pi Coding Agent
+on:
+  workflow_call:
+    inputs:
+      prompt:
+        type: string
+        required: false
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
+jobs:
+  pi-agent:
+    if: startsWith(github.event.comment.body, '/pi')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Setup Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
+
+      - name: Pi Review
+        uses: shaftoe/pi-coding-agent-action@v2
+        with:
+          provider: 'github'
+          model: 'gpt-4o'
+          #prompt: 'Review the changes in this PR and suggest improvements for performance and security.'
+          prompt: ${{ inputs.prompt }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.COPILOT_AGENT_TOKEN }}
