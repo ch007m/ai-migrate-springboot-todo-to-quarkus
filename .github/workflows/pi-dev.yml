@@ -57,7 +57,7 @@ jobs:
           npm install -g @mariozechner/pi-coding-agent
           pi install npm:pi-provider-vertex-anthropic
           
-          echo "Running pi command"
+          echo "Running pi command with prompt: ${{ github.event.comment.body }}"
           pi "${{ github.event.comment.body }}" \
             --provider vertex-anthropic \
             --model claude-opus-4-6
