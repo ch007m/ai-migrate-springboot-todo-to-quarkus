@@ -24,8 +24,8 @@ jobs:
       - name: Pi Review
         uses: shaftoe/pi-coding-agent-action@v2
         with:
-          provider: 'google'
-          model: 'gemini-2.5-pro'
+          provider: 'gcloud'
+          model: 'anthropic/claude-opus-4-6'
           github_token: ${{ secrets.WORKFLOW_GITHUB_TOKEN }}
           token: ${{ secrets.COPILOT_AGENT_TOKEN }}
           thinking_level: medium
