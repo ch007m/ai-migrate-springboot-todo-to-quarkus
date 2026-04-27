@@ -28,5 +28,4 @@ jobs:
           model: 'gemini-3.1-pro-preview'
           github_token: ${{ secrets.WORKFLOW_GITHUB_TOKEN }}
           token: ${{ secrets.COPILOT_AGENT_TOKEN }}
-          extensions: |
-            npm:pi-librarian
+          thinking_level: medium
