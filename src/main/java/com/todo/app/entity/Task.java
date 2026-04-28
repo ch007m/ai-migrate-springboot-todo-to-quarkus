@@ -1,7 +1,8 @@
 package com.todo.app.entity;
 
 import jakarta.persistence.*;
-import org.springframework.format.annotation.DateTimeFormat;
+// REMOVED: @DateTimeFormat — Spring-specific annotation not needed for JPA persistence.
+// Date format handling will be done in the Qute template / JSON serialization layer.
 
 import java.time.LocalDate;
 
@@ -17,7 +18,6 @@ public class Task {
 
   private String description;
 
-  @DateTimeFormat(pattern = "yyyy-MM-dd")
   private LocalDate dueDate;
 
   public Task() {

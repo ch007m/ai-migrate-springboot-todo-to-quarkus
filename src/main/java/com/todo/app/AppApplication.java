@@ -1,13 +1,15 @@
 package com.todo.app;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
+import io.quarkus.runtime.Quarkus;
+import io.quarkus.runtime.annotations.QuarkusMain;
 
-@SpringBootApplication
+// REMOVED: @SpringBootApplication — Quarkus auto-discovers beans; no equivalent needed.
+// Quarkus generates a main class automatically, but we keep an explicit one for clarity.
+@QuarkusMain
 public class AppApplication {
 
-	public static void main(String[] args) {
-        SpringApplication.run(AppApplication.class, args);
-	}
+    public static void main(String[] args) {
+        Quarkus.run(args);
+    }
 
 }
