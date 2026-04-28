@@ -64,7 +64,7 @@ jobs:
           SESSION_DIR=./pi-session
           echo "Session dir: $SESSION_DIR"
           
-          LATEST_JSONL_FILE=$(ls -t "${SESSION_DIR}"*.jsonl | head -n 1)
+          LATEST_JSONL_FILE=$(ls -t ${SESSION_DIR}/*.jsonl | head -n 1)
           FULL_FILENAME=$(basename "$LATEST_JSONL_FILE")
           BASENAME_ONLY=${FULL_FILENAME%.*}
           
