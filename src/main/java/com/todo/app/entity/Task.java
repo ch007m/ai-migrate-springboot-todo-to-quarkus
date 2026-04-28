@@ -1,7 +1,8 @@
 package com.todo.app.entity;
 
 import jakarta.persistence.*;
-import org.springframework.format.annotation.DateTimeFormat;
+// REMOVED: @DateTimeFormat — Spring-specific annotation for form binding.
+// In Quarkus with JAX-RS/JSON, date format is handled by Jackson/JSON-B serialization.
 
 import java.time.LocalDate;
 
@@ -10,14 +11,13 @@ import java.time.LocalDate;
 public class Task {
 
   @Id
-  @GeneratedValue(strategy = GenerationType.AUTO)
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
   private String title;
 
   private String description;
 
-  @DateTimeFormat(pattern = "yyyy-MM-dd")
   private LocalDate dueDate;
 
   public Task() {

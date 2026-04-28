@@ -1,49 +1,74 @@
 package com.todo.app.controller;
 
+import java.net.URI;
 import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.ResponseBody;
-
-import org.springframework.data.domain.Page;
 
 import com.todo.app.entity.Task;
 import com.todo.app.service.TaskService;
 
-@Controller
+import io.quarkus.qute.CheckedTemplate;
+import io.quarkus.qute.TemplateInstance;
+
+import jakarta.inject.Inject;
+import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.DELETE;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.POST;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.PathParam;
+import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
+
+import org.springframework.data.domain.Page;
+
+// REMOVED: @Controller — not supported by quarkus-spring-web (only @RestController).
+// Since this controller mixes HTML views (Thymeleaf Model+view names) and JSON REST endpoints,
+// it must be converted to a JAX-RS resource using Qute for templating.
+// The Spring @RestController compat layer only handles JSON — Qute templates need JAX-RS.
+@Path("/")
 public class TaskController {
 
-    @Autowired
+    @Inject
     private TaskService taskService;
 
-    @GetMapping("/error")
-    public String viewErrorPage() {
-        return "error";
+    @CheckedTemplate(requireTypeSafeExpressions = false)
+    public static class Templates {
+        public static native TemplateInstance home(
+            Task task,
+            boolean noTasks,
+            int currentPage,
+            int totalPages,
+            long totalItems,
+            List<Task> tasks
+        );
+        public static native TemplateInstance error();
     }
 
-    @GetMapping("/")
-    public String viewIndexPage() {
-        return "redirect:/home";
+    @GET
+    @Path("/error")
+    @Produces(MediaType.TEXT_HTML)
+    public TemplateInstance viewErrorPage() {
+        return Templates.error();
     }
 
-    @GetMapping("/home")
-    public String viewHome(Model model) {
-        model.addAttribute("task", new Task());
-        return findPaginated(1, model);
+    @GET
+    @Produces(MediaType.TEXT_HTML)
+    public Response viewIndexPage() {
+        return Response.seeOther(URI.create("/home")).build();
     }
 
-    @GetMapping("/home/{pageNo}")
-    public String findPaginated(@PathVariable(value = "pageNo") int pageNo, Model model) {
+    @GET
+    @Path("/home")
+    @Produces(MediaType.TEXT_HTML)
+    public Object viewHome() {
+        return findPaginated(1);
+    }
 
-        model.addAttribute("task", new Task());
+    @GET
+    @Path("/home/{pageNo}")
+    @Produces(MediaType.TEXT_HTML)
+    public Object findPaginated(@PathParam("pageNo") int pageNo) {
 
         int pageSize = 6;
 
@@ -51,41 +76,52 @@ public class TaskController {
         List<Task> tasks = page.getContent();
 
         if (tasks.isEmpty()) {
-            model.addAttribute("noTasks", true);
             if (pageNo > 1) {
-                return "redirect:/home/" + (pageNo - 1);
+                return Response.seeOther(URI.create("/home/" + (pageNo - 1))).build();
             }
+            return Templates.home(
+                new Task(),
+                true,
+                1,
+                0,
+                0,
+                List.of()
+            );
         } else {
-            model.addAttribute("currentPage", pageNo);
-            model.addAttribute("totalPages", page.getTotalPages());
-            model.addAttribute("totalItems", page.getTotalElements());
-            model.addAttribute("tasks", tasks);
-
             if (pageNo > page.getTotalPages()) {
-                return "redirect:/home/" + page.getTotalPages();
+                return Response.seeOther(URI.create("/home/" + page.getTotalPages())).build();
             }
             if (pageNo < 1) {
-                return "redirect:/home";
+                return Response.seeOther(URI.create("/home")).build();
             }
+            return Templates.home(
+                new Task(),
+                false,
+                pageNo,
+                page.getTotalPages(),
+                page.getTotalElements(),
+                tasks
+            );
         }
-
-        return "home";
     }
 
-    // Create task using AJAX request
-    @PostMapping("/home")
-    @ResponseBody
-    public ResponseEntity<List<Task>> createTask(@RequestBody Task task) {
+    // Create task using AJAX request (JSON endpoint)
+    @POST
+    @Path("/home")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response createTask(Task task) {
         taskService.addTask(task);
         List<Task> tasks = taskService.getAllTasks();
-        return ResponseEntity.ok(tasks);
+        return Response.ok(tasks).build();
     }
 
     // Delete task using AJAX request
-    @DeleteMapping("/home/{taskId}")
-    public ResponseEntity<Void> deleteTask(@PathVariable Long taskId) {
+    @DELETE
+    @Path("/home/{taskId}")
+    public Response deleteTask(@PathParam("taskId") Long taskId) {
         taskService.deleteTask(taskId);
-        return ResponseEntity.ok().build();
+        return Response.ok().build();
     }
 
 }
