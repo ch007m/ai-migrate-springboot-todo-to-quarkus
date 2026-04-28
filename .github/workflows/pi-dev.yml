@@ -35,31 +35,22 @@ jobs:
       - name: auth
         uses: 'google-github-actions/auth@v3'
         with:
-          # This automatically sets GOOGLE_APPLICATION_CREDENTIALS for Pi
           credentials_json: '${{ secrets.GOOGLE_CLOUD_CREDENTIALS }}'
-
-      #- name: Create GCP Credentials File
-      #  run: |
-      #     # Create a directory and write the secret to a JSON file
-      #     mkdir -p ~/.config/gcloud
-      #     echo '${{ secrets.GOOGLE_CLOUD_CREDENTIALS }}' > ~/.config/gcloud/service-account.json
-      #
-      #     # Export the path to the environment for subsequent steps
-      #     echo "GOOGLE_APPLICATION_CREDENTIALS=$HOME/.config/gcloud/service-account.json" >> $GITHUB_ENV
         
       - name: Run Pi.dev Agent
         env:
-          GOOGLE_CLOUD_PROJECT: itpc-gcp-cp-pe-eng-claude
           VERTEX_LOCATION: europe-west1
-          # The variable is already in GITHUB_ENV, but we can be explicit:
+          GOOGLE_CLOUD_PROJECT: itpc-gcp-cp-pe-eng-claude
           GOOGLE_APPLICATION_CREDENTIALS: ${{ env.GOOGLE_APPLICATION_CREDENTIALS }}
         run: |
           npm install -g @mariozechner/pi-coding-agent
-          pi install npm:pi-provider-vertex-anthropic
+          pi install pi-provider-vertex-anthropic
           
           echo "Running pi command with prompt: ${{ github.event.comment.body }}"
           pi --print \
+            --no-skills \
             --no-prompt-templates \
+            --skill ./skills/migrate-spring-to-quarkus \
             --provider vertex-anthropic \
             --model claude-opus-4-6 \
             ${{ github.event.comment.body }}
