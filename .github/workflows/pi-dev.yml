@@ -16,26 +16,12 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v6
 
-      #- name: Setup Node
-      #  uses: actions/setup-node@v6
+      # WARNING: Google Cloud don't allow to use a Service Account on a public repository !
+      # Disabled
+      #- name: auth
+      #  uses: 'google-github-actions/auth@v3'
       #  with:
-      #    node-version: 24
-
-      #- name: Pi Review
-      #  uses: shaftoe/pi-coding-agent-action@v2
-      #  with:
-      #    provider: 'gcloud'
-      #    model: 'claude-opus-4-6'
-      #    github_token: ${{ secrets.WORKFLOW_GITHUB_TOKEN }}
-      #    token: ${{ secrets.COPILOT_AGENT_TOKEN }}
-      #    thinking_level: medium
-      #    extensions:
-      #      git:https://github.com/maxandersen/pi-vertex-anthropic
-
-      - name: auth
-        uses: 'google-github-actions/auth@v3'
-        with:
-          credentials_json: '${{ secrets.GOOGLE_CLOUD_CREDENTIALS }}'
+      #    credentials_json: '${{ secrets.GOOGLE_CLOUD_CREDENTIALS }}'
         
       - name: Run Pi.dev Agent
         env:
