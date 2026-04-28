@@ -1,9 +1,10 @@
 package com.todo.app.entity;
 
 import jakarta.persistence.*;
-import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 @Entity
 @Table(name = "tasks")
@@ -17,7 +18,10 @@ public class Task {
 
   private String description;
 
-  @DateTimeFormat(pattern = "yyyy-MM-dd")
+  // REMOVED: @DateTimeFormat(pattern = "yyyy-MM-dd")
+  // Reason: @DateTimeFormat is a Spring-specific annotation for binding form/request params.
+  // Replaced with @JsonFormat for JSON deserialization in REST endpoints.
+  @JsonFormat(pattern = "yyyy-MM-dd")
   private LocalDate dueDate;
 
   public Task() {

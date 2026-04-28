@@ -1,13 +1,18 @@
 package com.todo.app;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
+// REMOVED: @SpringBootApplication main class
+// Reason: Quarkus auto-generates a main class — no explicit entry point is needed.
+// The original class only contained SpringApplication.run() with no @Bean methods,
+// CommandLineRunner, or other logic to migrate.
 
-@SpringBootApplication
+import io.quarkus.runtime.Quarkus;
+import io.quarkus.runtime.annotations.QuarkusMain;
+
+@QuarkusMain
 public class AppApplication {
 
-	public static void main(String[] args) {
-        SpringApplication.run(AppApplication.class, args);
-	}
+    public static void main(String[] args) {
+        Quarkus.run(args);
+    }
 
 }
