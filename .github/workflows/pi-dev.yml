@@ -47,7 +47,7 @@ jobs:
           pi install npm:pi-provider-vertex-anthropic
           
           echo "Running pi command with prompt: ${{ github.event.comment.body }}"
-          script -q /dev/null pi --print \
+          pi --print \
             --no-skills \
             --no-prompt-templates \
             --skill ./skills/migrate-spring-to-quarkus \
@@ -55,4 +55,28 @@ jobs:
             --model claude-opus-4-6 \
             ${{ github.event.comment.body }}
           
-          echo "pi command executed"
+          echo "pi command executed."
+
+      - name: Export and Zip Session
+        if: always()
+        run: |
+          SESSION_DIR=$(ls -td ~/.pi/agent/sessions/*/ | head -n 1)
+          echo "Session dir: $SESSION_DIR"
+          
+          LATEST_JSONL_FILE=$(ls -t "${SESSION_DIR}"*.jsonl | head -n 1)
+          FULL_FILENAME=$(basename "$LATEST_JSONL_FILE")
+          BASENAME_ONLY=${FULL_FILENAME%.*}
+          
+          echo "Session jsonl name: $FULL_FILENAME"
+          echo "Session id: $BASENAME_ONLY"
+          
+          pi --export "$LATEST_JSONL_FILE" "pi-session-$BASENAME_ONLY.html" -p
+          zip -r "pi-session-$BASENAME_ONLY.zip" pi-session-$BASENAME_ONLY.html
+
+      - name: Upload Session Artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pi-jonl-session
+          path: pi-session-*.zip
+          retention-days: 2
