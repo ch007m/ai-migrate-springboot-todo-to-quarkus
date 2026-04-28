@@ -44,7 +44,7 @@ jobs:
           GOOGLE_APPLICATION_CREDENTIALS: ${{ env.GOOGLE_APPLICATION_CREDENTIALS }}
         run: |
           npm install -g @mariozechner/pi-coding-agent
-          pi install pi-provider-vertex-anthropic
+          pi install npm:pi-provider-vertex-anthropic
           
           echo "Running pi command with prompt: ${{ github.event.comment.body }}"
           pi --print \
