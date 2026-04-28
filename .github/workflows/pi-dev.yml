@@ -46,7 +46,7 @@ jobs:
           npm install -g @mariozechner/pi-coding-agent
           pi install npm:pi-provider-vertex-anthropic
           
-          echo "Running pi command with prompt: ${{ github.event.comment.body }}"
+          echo "Running pi: ${{ github.event.comment.body }}"
           pi --print \
             --no-skills \
             --no-prompt-templates \
@@ -72,12 +72,12 @@ jobs:
           echo "Session id: $BASENAME_ONLY"
           
           pi --export "$LATEST_JSONL_FILE" "pi-session-$BASENAME_ONLY.html" -p
-          zip -r "pi-session-$BASENAME_ONLY.zip" pi-session-$BASENAME_ONLY.html
+          zip -r "pi-session-$BASENAME_ONLY.zip" $LATEST_JSONL_FILE pi-session-$BASENAME_ONLY.html
 
       - name: Upload Session Artifact
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: pi-jonl-session
+          name: pi-jsonl-session
           path: pi-session-*.zip
           retention-days: 2
