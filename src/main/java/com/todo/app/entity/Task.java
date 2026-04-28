@@ -1,7 +1,8 @@
 package com.todo.app.entity;
 
 import jakarta.persistence.*;
-import org.springframework.format.annotation.DateTimeFormat;
+// REMOVED: @DateTimeFormat (Spring MVC form binding annotation)
+// Reason: Not needed — LocalDate is natively handled by JSON-B/Jackson in Quarkus REST.
 
 import java.time.LocalDate;
 
@@ -17,7 +18,6 @@ public class Task {
 
   private String description;
 
-  @DateTimeFormat(pattern = "yyyy-MM-dd")
   private LocalDate dueDate;
 
   public Task() {
