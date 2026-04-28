@@ -47,7 +47,7 @@ jobs:
           pi install npm:pi-provider-vertex-anthropic
           
           echo "Running pi command with prompt: ${{ github.event.comment.body }}"
-          pi --print \
+          script -q /dev/null pi --print \
             --no-skills \
             --no-prompt-templates \
             --skill ./skills/migrate-spring-to-quarkus \
